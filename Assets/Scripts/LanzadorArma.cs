@@ -1,51 +1,96 @@
 using UnityEngine;
 using System.Collections;
-using UnityEngine.UIElements;   
 
 public class LanzadorArma : MonoBehaviour
 {
-    /////////////////////////////////////////////////////////////////// VARIABLES ///////////////////////////////////////////
-
-    [Header("Configuración del Arma")]
-    [Tooltip("El Prefab del proyectil que vamos a disparar")]
+    [Header("Configuración")]
     public GameObject proyectilPrefab;
 
-    [Tooltip("Tiempo en segundos entre cada disparo")]
-    public float tiempoDeAtaque = 3f;
+    public float tiempoDeAtaque = 2f; 
+    public int projectilesPerBurst = 1;
     
-    public Transform spawnPoint;
+    [Header("Estado")]
+    public int level = 1;
 
-    ///////////////////////////////////////////////////////////////// FUNCIONES UNITY /////////////////////////////////////////
+    private float timer;
+    private float baseCooldown;
+
+    private PlayerLevel playerLevelScript;
 
     void Start()
     {
-        // En cuanto empieza el juego, iniciamos la rutina de ataque.
-        // La coroutine se encargará de su propio bucle.
-        if (proyectilPrefab != null)
+        baseCooldown = tiempoDeAtaque;
+        timer = tiempoDeAtaque; 
+        
+        if (proyectilPrefab == null) return;
+
+        playerLevelScript = FindFirstObjectByType<PlayerLevel>();
+    }
+
+    void OnDestroy()
+    {
+        
+    }
+
+    void Update()
+    {
+        if (playerLevelScript && playerLevelScript.currentLevel > level)
         {
-            StartCoroutine(LanzarAtaqueRutina());
+            LevelUp();
         }
-        else
+
+        timer += Time.deltaTime;
+        if (timer >= tiempoDeAtaque)
         {
-            Debug.LogError("¡No se ha asignado un Prefab de proyectil en el LanzadorArma!");
+            LanzarAtaque();
+            timer = 0f;
         }
     }
 
-    /////////////////////////////////////////////////////////////// FUNCIONES PROPIAS /////////////////////////////////////////
-
-    IEnumerator LanzarAtaqueRutina()
+    void RecalculateStats()
     {
-        // Un bucle infinito y seguro, gracias a la Coroutine.
-        while (true)
+        tiempoDeAtaque = Mathf.Max(0.2f, baseCooldown * Mathf.Pow(0.9f, level - 1));
+    }
+
+    void LanzarAtaque()
+    {
+        StartCoroutine(LanzarAtaqueRutina());
+    }
+
+    System.Collections.IEnumerator LanzarAtaqueRutina()
+    {
+        for (int i = 0; i < projectilesPerBurst; i++)
         {
-            // 1. Instanciamos el proyectil en la posición y rotación del jugador
-            // (El jugador está en el centro, así que usamos su transform.position)
-            // Usamos transform.rotation para que el proyectil se oriente como el jugador.
-            Instantiate(proyectilPrefab, spawnPoint.position, transform.rotation * proyectilPrefab.transform.rotation);
-            
-            // 2. Pausamos la coroutine
-            // Espera el tiempo de ataque antes de volver al inicio del bucle.
-            yield return new WaitForSeconds(tiempoDeAtaque);
+            if (proyectilPrefab != null)
+            {
+                GameObject instance = Instantiate(proyectilPrefab, transform.position, Quaternion.identity);
+                
+                var hacha = instance.GetComponent<ProyectilHacha>();
+                if (hacha != null)
+                {
+                    hacha.dano = Mathf.RoundToInt(hacha.dano * (1 + (level - 1) * 0.2f));
+                }
+                
+                var slash = instance.GetComponent<SlashWarrior>();
+                if (slash != null)
+                {
+                    slash.dano = Mathf.RoundToInt(slash.dano * (1 + (level - 1) * 0.2f));
+                }
+                
+                var rayo = instance.GetComponent<RayoDeEnergia>();
+                if (rayo != null)
+                {
+                    rayo.Inicializar(level);
+                }
+            }
+            yield return new WaitForSeconds(0.2f);
         }
+    }
+
+    public void LevelUp()
+    {
+        level++;
+        if (level % 3 == 0) projectilesPerBurst++;
+        RecalculateStats();
     }
 }

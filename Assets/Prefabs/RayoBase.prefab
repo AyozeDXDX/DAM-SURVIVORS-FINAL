@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1547731254814850313}
   - component: {fileID: 3986241910749152529}
   - component: {fileID: 6297510658062268135}
+  - component: {fileID: -2749481389468462030}
   m_Layer: 0
   m_Name: RayoBase
   m_TagString: Untagged
@@ -130,3 +131,30 @@ MonoBehaviour:
   intervaloDano: 0.25
   danoPorTick: 2
   radioDeteccion: 20
+--- !u!54 &-2749481389468462030
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5033067427568887665}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0

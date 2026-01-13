@@ -100,6 +100,24 @@ public partial class @Controles: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""AddWeapon"",
+                    ""type"": ""Button"",
+                    ""id"": ""e087bb4f-3e3b-476b-a03d-10fc6da7274c"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""LevelUpWeapon"",
+                    ""type"": ""Button"",
+                    ""id"": ""f308942c-9f42-4357-a4f5-b1da8542c6cd"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -157,6 +175,28 @@ public partial class @Controles: IInputActionCollection2, IDisposable
                     ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""46b049a7-e369-4d45-8991-589df22157b0"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""AddWeapon"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1bfb46e2-e2a8-4a1a-ad72-2fca4d6e1caa"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""LevelUpWeapon"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -194,6 +234,8 @@ public partial class @Controles: IInputActionCollection2, IDisposable
         // Player
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
+        m_Player_AddWeapon = m_Player.FindAction("AddWeapon", throwIfNotFound: true);
+        m_Player_LevelUpWeapon = m_Player.FindAction("LevelUpWeapon", throwIfNotFound: true);
         // Camara
         m_Camara = asset.FindActionMap("Camara", throwIfNotFound: true);
         m_Camara_Zoom = m_Camara.FindAction("Zoom", throwIfNotFound: true);
@@ -279,6 +321,8 @@ public partial class @Controles: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_Player;
     private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
     private readonly InputAction m_Player_Move;
+    private readonly InputAction m_Player_AddWeapon;
+    private readonly InputAction m_Player_LevelUpWeapon;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -294,6 +338,14 @@ public partial class @Controles: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/Move".
         /// </summary>
         public InputAction @Move => m_Wrapper.m_Player_Move;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/AddWeapon".
+        /// </summary>
+        public InputAction @AddWeapon => m_Wrapper.m_Player_AddWeapon;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/LevelUpWeapon".
+        /// </summary>
+        public InputAction @LevelUpWeapon => m_Wrapper.m_Player_LevelUpWeapon;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -323,6 +375,12 @@ public partial class @Controles: IInputActionCollection2, IDisposable
             @Move.started += instance.OnMove;
             @Move.performed += instance.OnMove;
             @Move.canceled += instance.OnMove;
+            @AddWeapon.started += instance.OnAddWeapon;
+            @AddWeapon.performed += instance.OnAddWeapon;
+            @AddWeapon.canceled += instance.OnAddWeapon;
+            @LevelUpWeapon.started += instance.OnLevelUpWeapon;
+            @LevelUpWeapon.performed += instance.OnLevelUpWeapon;
+            @LevelUpWeapon.canceled += instance.OnLevelUpWeapon;
         }
 
         /// <summary>
@@ -337,6 +395,12 @@ public partial class @Controles: IInputActionCollection2, IDisposable
             @Move.started -= instance.OnMove;
             @Move.performed -= instance.OnMove;
             @Move.canceled -= instance.OnMove;
+            @AddWeapon.started -= instance.OnAddWeapon;
+            @AddWeapon.performed -= instance.OnAddWeapon;
+            @AddWeapon.canceled -= instance.OnAddWeapon;
+            @LevelUpWeapon.started -= instance.OnLevelUpWeapon;
+            @LevelUpWeapon.performed -= instance.OnLevelUpWeapon;
+            @LevelUpWeapon.canceled -= instance.OnLevelUpWeapon;
         }
 
         /// <summary>
@@ -480,6 +544,20 @@ public partial class @Controles: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnMove(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "AddWeapon" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnAddWeapon(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "LevelUpWeapon" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnLevelUpWeapon(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Camara" which allows adding and removing callbacks.

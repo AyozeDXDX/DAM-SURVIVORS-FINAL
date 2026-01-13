@@ -2,30 +2,18 @@ using UnityEngine;
 
 public class SeguimientoCamara : MonoBehaviour
 {
-    [Header("Configuración de Seguimiento")]
-    [Tooltip("El objeto que la cámara debe seguir. Arrastra al Jugador aquí.")]
+    [Header("Objetivo")]
     public Transform objetivo;
-
-    [Tooltip("Qué tan suavemente sigue la cámara al objetivo. Un valor más bajo es más 'flotante', un valor más alto es más rígido.")]
     public float velocidadSuavizado = 5f;
 
-    // Esta variable privada guardará la distancia y el ángulo inicial
-    // entre la cámara y el jugador.
     private Vector3 offset;
     public Controles control;
 
-
-    [Header("Configuración del zoom")]
+    [Header("Zoom")]
     private float zoom = 1f;
-    [Tooltip("Sensibilidad de la rueda del ratón.")]
     public float sensibilidadZoom = 0.1f;
-
-    [Tooltip("Qué tan cerca podemos estar del objetivo.")]
     public float zoomMinimo = 0.5f;
-
-    [Tooltip("Qué tan lejos podemos estar del objetivo.")]
     public float zoomMaximo = 2f;
-    ///////////////////////////////////////////////////////////////// FUNCIONES UNITY /////////////////////////////////////////
 
 
     void Awake()
@@ -43,18 +31,16 @@ public class SeguimientoCamara : MonoBehaviour
         control.Disable();
     }
 
+    private Quaternion rotacionInicial;
+
     void Start()
     {
         // Comprobación de seguridad
         if (objetivo == null)
         {
-            Debug.LogError("¡La cámara seguidora no tiene un objetivo asignado!");
             return;
         }
 
-        // Calculamos el 'offset' (desplazamiento) inicial una sola vez.
-        // Esta es la distancia y ángulo que queremos mantener SIEMPRE.
-        // offset = PosiciónCámara - PosiciónJugador
         offset = transform.position - objetivo.position;
     }
 
@@ -63,28 +49,23 @@ public class SeguimientoCamara : MonoBehaviour
         SetZoom();
     }
 
-    // ¡Usamos LateUpdate() para todo lo relacionado con cámaras!
     void LateUpdate()
     {
-        // Si no tenemos objetivo (ej. el jugador muere), no hacemos nada.
         if (objetivo == null) return;
 
-        // 1. Calcular la posición a la que la cámara QUIERE estar.
-        //    PosiciónDeseada = PosiciónActualDelJugador + DistanciaGuardada
         Vector3 posicionDeseada = objetivo.position + offset * zoom;
 
-        // 2. Mover la cámara suavemente.
-        //    Usamos Vector3.Lerp (que ya vimos en nuestra guía) para
-        //    movernos desde nuestra posición actual (transform.position)
-        //    hacia la posición deseada, a una velocidad suave.
-        transform.position = Vector3.Lerp(transform.position, posicionDeseada, velocidadSuavizado * Time.deltaTime);
-    }
+        // Mover la cámara suavemente.        
+        Vector3 shakeOffset = Vector3.zero;
+        if (CameraShake.Instance != null) shakeOffset = CameraShake.Instance.currentShakeOffset;
 
-    /////////////////////////////////////////////////////////////// FUNCIONES PROPIAS /////////////////////////////////////////
+        transform.position = Vector3.Lerp(transform.position, posicionDeseada, velocidadSuavizado * Time.deltaTime) + shakeOffset;
+    }
     
     
     public void SetZoom()
     {
+       if (control == null || control.Camara.Zoom == null) return;
        float valorRueda = control.Camara.Zoom.ReadValue<float>();
        zoom -= valorRueda * sensibilidadZoom;
        zoom = Mathf.Clamp(zoom, zoomMinimo, zoomMaximo);

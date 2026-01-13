@@ -24,10 +24,15 @@ public class SlashAtaque : MonoBehaviour
             // Hacemos que el slash sea hijo del jugador
             transform.SetParent(playerTransform, true);
             
-            // CORRECCIÓN: Forzar posición delante del jugador
-            transform.localPosition = new Vector3(0, 0f, 1.5f); 
-            transform.localRotation = Quaternion.identity; 
+            Vector3 frenteJugador = player.transform.forward;
+            transform.position = player.transform.position + frenteJugador * 1.5f + Vector3.up * 1f;
+            transform.rotation = player.transform.rotation; 
         }
+
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb == null) rb = gameObject.AddComponent<Rigidbody>();
+        rb.isKinematic = true;
+        rb.useGravity = false;
     }
 
     void Update()
@@ -38,15 +43,11 @@ public class SlashAtaque : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // Debug para ver qué estamos tocando
-        // Debug.Log("Slash tocó: " + other.name);
-
         // Intentar obtener el componente EnemyController del objeto colisionado
         EnemyController enemigo = other.GetComponent<EnemyController>();
 
         if (enemigo != null)
         {
-            Debug.Log("Slash impactó a enemigo: " + enemigo.name);
             // Aplicar daño al enemigo
             enemigo.RecibirDano(dano);
         }
